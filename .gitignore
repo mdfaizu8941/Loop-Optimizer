@@ -1,0 +1,17 @@
+# Python virtual environment and cache
+.venv/
+__pycache__/
+*.pyc
+
+# Build artifacts
+*.exe
+*.obj
+*.o
+
+# Generated outputs
+ouput.c
+last_optimizer_run.json
+runlog.txt
+
+# Temporary local test files
+tmp_*.c
