@@ -4,6 +4,7 @@ import json
 import subprocess
 from datetime import datetime
 from pathlib import Path
+from textwrap import dedent
 
 import streamlit as st
 
@@ -46,6 +47,283 @@ def load_metrics(path: Path) -> dict:
         return json.loads(path.read_text(encoding="utf-8", errors="replace"))
     except json.JSONDecodeError:
         return {}
+
+
+def inject_ui_styles() -> None:
+    st.markdown(
+        dedent(
+            """
+            <style>
+            .stApp {
+                background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+                color: #e2e8f0;
+            }
+
+            .block-container {
+                padding-top: 1.2rem;
+                padding-bottom: 2.5rem;
+                max-width: 1240px;
+            }
+
+            .hero {
+                display: flex;
+                justify-content: space-between;
+                gap: 1rem;
+                align-items: flex-end;
+                padding: 1.5rem 1.75rem;
+                border: 1px solid rgba(148, 163, 184, 0.18);
+                border-radius: 18px;
+                background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.92));
+                box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+                margin-bottom: 1.25rem;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .hero::after {
+                content: "";
+                position: absolute;
+                inset: auto -10% -65% auto;
+                width: 18rem;
+                height: 18rem;
+                border-radius: 999px;
+                background: radial-gradient(circle, rgba(56, 189, 248, 0.22), rgba(56, 189, 248, 0.02) 70%, transparent 72%);
+                pointer-events: none;
+            }
+
+            .hero-brand {
+                margin: 0;
+                font-size: 3.35rem;
+                line-height: 1;
+                font-weight: 800;
+                letter-spacing: -0.05em;
+                background: linear-gradient(135deg, #f8fafc 0%, #38bdf8 46%, #22c55e 100%);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                text-shadow: 0 8px 24px rgba(14, 165, 233, 0.18);
+            }
+
+            .hero-subtitle {
+                margin-top: 0.55rem;
+                max-width: 48rem;
+                color: #cbd5e1;
+                font-size: 1.03rem;
+                line-height: 1.65;
+            }
+
+            .hero-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.45rem;
+                padding: 0.45rem 0.8rem;
+                border-radius: 999px;
+                background: rgba(30, 41, 59, 0.8);
+                border: 1px solid rgba(96, 165, 250, 0.18);
+                color: #dbeafe;
+                font-size: 0.85rem;
+                letter-spacing: 0.02em;
+            }
+
+            .panel {
+                border: 1px solid rgba(148, 163, 184, 0.18);
+                border-radius: 18px;
+                background: rgba(15, 23, 42, 0.82);
+                box-shadow: 0 16px 40px rgba(2, 6, 23, 0.28);
+                padding: 1.15rem 1.2rem;
+                margin-bottom: 1rem;
+            }
+
+            .panel-title {
+                font-size: 1.15rem;
+                font-weight: 700;
+                color: #f8fafc;
+                margin: 0 0 0.25rem 0;
+            }
+
+            .panel-subtitle {
+                color: #94a3b8;
+                margin: 0 0 1rem 0;
+                font-size: 0.95rem;
+            }
+
+            .upload-zone {
+                border: 1.5px dashed rgba(56, 189, 248, 0.45);
+                border-radius: 16px;
+                background: linear-gradient(135deg, rgba(30, 41, 59, 0.72), rgba(15, 23, 42, 0.92));
+                padding: 1rem;
+                margin-bottom: 0.9rem;
+            }
+
+            .upload-hint {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                color: #cbd5e1;
+                margin-bottom: 0.75rem;
+            }
+
+            .upload-file {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.55rem;
+                padding: 0.6rem 0.85rem;
+                margin-top: 0.65rem;
+                border-radius: 999px;
+                background: rgba(37, 99, 235, 0.14);
+                color: #dbeafe;
+                border: 1px solid rgba(96, 165, 250, 0.2);
+                font-size: 0.95rem;
+            }
+
+            div[data-testid="stButton"] > button {
+                width: 100%;
+                border: none !important;
+                border-radius: 14px !important;
+                padding: 0.85rem 1.1rem !important;
+                background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%) !important;
+                color: #fff !important;
+                font-weight: 700 !important;
+                box-shadow: 0 12px 28px rgba(37, 99, 235, 0.28) !important;
+                transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease !important;
+            }
+
+            div[data-testid="stButton"] > button:hover {
+                transform: translateY(-1px) scale(1.02);
+                filter: brightness(1.05);
+                box-shadow: 0 16px 34px rgba(6, 182, 212, 0.24) !important;
+            }
+
+            div[data-testid="stButton"] > button:disabled {
+                background: linear-gradient(135deg, rgba(75, 85, 99, 0.92), rgba(51, 65, 85, 0.92)) !important;
+                color: rgba(226, 232, 240, 0.62) !important;
+                box-shadow: none !important;
+                transform: none !important;
+            }
+
+            .metric-card {
+                border: 1px solid rgba(148, 163, 184, 0.16);
+                border-radius: 16px;
+                background: linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.72));
+                padding: 1rem;
+                height: 100%;
+            }
+
+            .metric-label {
+                color: #94a3b8;
+                font-size: 0.82rem;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                margin-bottom: 0.4rem;
+            }
+
+            .metric-value {
+                color: #f8fafc;
+                font-size: 1.55rem;
+                font-weight: 700;
+                line-height: 1.1;
+            }
+
+            .metric-note {
+                margin-top: 0.4rem;
+                color: #94a3b8;
+                font-size: 0.88rem;
+            }
+
+            .insight-card {
+                border: 1px solid rgba(56, 189, 248, 0.18);
+                border-radius: 16px;
+                background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(15, 23, 42, 0.84));
+                padding: 1rem 1.05rem;
+                height: 100%;
+            }
+
+            .insight-title {
+                color: #e2e8f0;
+                font-weight: 700;
+                margin-bottom: 0.35rem;
+            }
+
+            .insight-text {
+                color: #cbd5e1;
+                font-size: 0.95rem;
+                line-height: 1.55;
+            }
+
+            .code-card {
+                border: 1px solid rgba(148, 163, 184, 0.18);
+                border-radius: 16px;
+                background: rgba(15, 23, 42, 0.78);
+                padding: 0.9rem;
+                height: 100%;
+            }
+
+            .footer-note {
+                text-align: center;
+                color: #64748b;
+                font-size: 0.9rem;
+                margin-top: 1.75rem;
+                padding-top: 0.85rem;
+                border-top: 1px solid rgba(148, 163, 184, 0.12);
+            }
+
+            .stExpander details {
+                border-radius: 14px;
+                background: rgba(15, 23, 42, 0.72);
+                border: 1px solid rgba(148, 163, 184, 0.14);
+            }
+
+            @media (max-width: 768px) {
+                .hero {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .hero-brand {
+                    font-size: 2.5rem;
+                }
+
+                .block-container {
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+                }
+            }
+            </style>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
+
+
+def render_hero() -> None:
+    st.markdown(
+        dedent(
+            """
+            <div class="hero">
+              <div>
+                <div class="hero-chip">Loop Optimizer • Compiler Optimization Project</div>
+                <h1 class="hero-brand">Loop Optimizer</h1>
+                <div class="hero-subtitle">Optimize C/C++ loops for better performance automatically, compare original and optimized code side by side, and review practical optimization metrics in one place.</div>
+              </div>
+              <div class="hero-chip">Fast feedback for loop-heavy source files</div>
+            </div>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
+
+
+def estimate_loop_depth(source_text: str) -> int:
+    depth = 0
+    best = 0
+    for line in source_text.splitlines():
+        stripped = line.strip().lower()
+        if stripped.startswith(("for ", "for(", "while ", "while(")):
+            depth += 1
+            best = max(best, depth)
+        if "}" in line and depth > 0:
+            depth = max(0, depth - line.count("}"))
+    return best
 
 
 def detect_optimizer(explicit: str, workspace: Path) -> Path | None:
@@ -113,12 +391,16 @@ def render_code_columns(input_name: str, output_name: str, src_before: str, src_
     left, right = st.columns(2)
 
     with left:
+        st.markdown("<div class='code-card'>", unsafe_allow_html=True)
         st.subheader(f"Original: {input_name}")
         st.code(src_before or "File is empty or missing.", language="c")
+        st.markdown("</div>", unsafe_allow_html=True)
 
     with right:
+        st.markdown("<div class='code-card'>", unsafe_allow_html=True)
         st.subheader(f"Optimized: {output_name}")
         st.code(src_after or "File is empty or missing.", language="c")
+        st.markdown("</div>", unsafe_allow_html=True)
 
 
 def render_diff(src_before: str, src_after: str, input_name: str, output_name: str) -> None:
@@ -140,11 +422,19 @@ def render_metrics_card(metrics: dict, src_before: str, src_after: str) -> None:
     input_lines = len(src_before.splitlines())
     output_lines = len(src_after.splitlines())
 
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Input lines", input_lines)
-    col2.metric("Output lines", output_lines, delta=output_lines - input_lines)
-    col3.metric("Added lines", added)
-    col4.metric("Removed lines", removed)
+    cols = st.columns(4)
+    cards = [
+        ("Input lines", f"{input_lines}", f"Δ {output_lines - input_lines:+d} lines"),
+        ("Output lines", f"{output_lines}", "Optimized source size"),
+        ("Added lines", f"{added}", "Newly introduced statements"),
+        ("Removed lines", f"{removed}", "Removed or replaced statements"),
+    ]
+    for column, (label, value, note) in zip(cols, cards):
+        with column:
+            st.markdown(
+                f"<div class='metric-card'><div class='metric-label'>{label}</div><div class='metric-value'>{value}</div><div class='metric-note'>{note}</div></div>",
+                unsafe_allow_html=True,
+            )
 
     st.caption(f"Approx changed-line overlap: {changed}")
 
@@ -184,12 +474,40 @@ def render_optimizer_report(metrics: dict) -> None:
     c4.metric("Elapsed (ms)", report.get("elapsedMs", 0))
 
 
+def render_insights(src_before: str, metrics: dict) -> None:
+    report = metrics.get("optimizer_report", {}) or {}
+    loop_depth = estimate_loop_depth(src_before)
+    if report.get("loopsUnrolled", 0):
+        suggestion_one = "Loop unrolling was applied to reduce iteration overhead."
+    else:
+        suggestion_one = "Consider unrolling small fixed-count loops where safety checks allow."
+
+    if report.get("loopsSkippedSafety", 0):
+        suggestion_two = "Some loops were skipped for safety, which keeps transformations conservative."
+    else:
+        suggestion_two = "No safety skips were reported in the current optimization run."
+
+    st.subheader("Smart insights")
+    left, right = st.columns([1, 2])
+    with left:
+        st.markdown(
+            f"<div class='insight-card'><div class='insight-title'>Detected loop depth</div><div class='insight-text'>Estimated nesting depth: <strong>{loop_depth}</strong><br/>This is a lightweight frontend heuristic from the uploaded source.</div></div>",
+            unsafe_allow_html=True,
+        )
+    with right:
+        st.markdown(
+            f"<div class='insight-card'><div class='insight-title'>Optimization suggestions</div><div class='insight-text'>• {suggestion_one}<br/>• {suggestion_two}<br/><br/>Tooltip idea: Loop unrolling reduces iteration overhead by executing multiple iterations per loop body.</div></div>",
+            unsafe_allow_html=True,
+        )
+
+
 def main() -> None:
     args = parse_args()
     workspace = Path(__file__).resolve().parent
 
     st.set_page_config(page_title="Loop Optimizer Visual Compare", layout="wide")
-    st.title("Loop Optimizer")
+    inject_ui_styles()
+    render_hero()
 
     optimizer = detect_optimizer(args.optimizer, workspace)
 
@@ -216,35 +534,36 @@ def main() -> None:
             "ok": True,
         }
     else:
-        st.subheader(" Select Source File")
+        st.markdown(
+            "<div class='panel'><div class='panel-title'>Upload Your Source File</div><div class='panel-subtitle'>Drop a .c or .cpp file below or browse to select one.</div><div class='upload-zone'><div class='upload-hint'>📤 <div><strong>Drop your .c / .cpp file here</strong><br/>or click to browse</div></div>",
+            unsafe_allow_html=True,
+        )
         uploaded = st.file_uploader(
             "Upload C/C++ source file",
-            type=["c","cpp"],
+            type=["c", "cpp"],
             accept_multiple_files=False,
+            label_visibility="collapsed",
         )
+        if uploaded is not None:
+            st.markdown(
+                f"<div class='upload-file'>📄 <span>{uploaded.name}</span></div>",
+                unsafe_allow_html=True,
+            )
 
         can_run = uploaded is not None and optimizer is not None
-        if st.button("Optimize", type="primary", disabled=not can_run):
+        if st.button("⚡ Optimize", type="primary", disabled=not can_run):
             src_before = uploaded.getvalue().decode("utf-8", errors="replace")
-            result = run_backend_optimization(uploaded.name, src_before, optimizer, workspace)
-            if result["ok"]:
-                st.session_state["last_run"] = {
-                    "input_path": result["input_path"],
-                    "output_path": result["output_path"],
-                    "src_before": src_before,
-                    "src_after": safe_read(result["output_path"]),
-                    "metrics": result["metrics"],
-                    "ok": True,
-                }
-            else:
-                st.session_state["last_run"] = {
-                    "input_path": result["input_path"],
-                    "output_path": result["output_path"],
-                    "src_before": src_before,
-                    "src_after": safe_read(result["output_path"]),
-                    "metrics": result["metrics"],
-                    "ok": False,
-                }
+            with st.spinner("Optimizing... ⚙️"):
+                result = run_backend_optimization(uploaded.name, src_before, optimizer, workspace)
+            st.session_state["last_run"] = {
+                "input_path": result["input_path"],
+                "output_path": result["output_path"],
+                "src_before": src_before,
+                "src_after": safe_read(result["output_path"]),
+                "metrics": result["metrics"],
+                "ok": result["ok"],
+            }
+        st.markdown("</div></div>", unsafe_allow_html=True)
 
         run_data = st.session_state.get("last_run")
 
@@ -258,24 +577,35 @@ def main() -> None:
     input_path = run_data["input_path"]
     output_path = run_data["output_path"]
 
-    st.subheader("Optimized File")
     if run_data.get("ok"):
-        st.success("Optimization completed successfully.")
+        st.success("✅ Optimization completed successfully.")
     else:
-        st.error("Optimization failed. See optimizer output below.")
+        st.error("❌ Optimization failed. See optimizer output below.")
 
     render_metrics_card(metrics, src_before, src_after)
+    render_insights(src_before, metrics)
     render_optimizer_report(metrics)
-    render_optimizer_output(metrics)
+
+    st.subheader("Before vs After")
     render_code_columns(input_path.name, output_path.name, src_before, src_after)
+
+    st.subheader("Unified diff")
     render_diff(src_before, src_after, input_path.name, output_path.name)
 
+    render_optimizer_output(metrics)
+
     st.download_button(
-        label="Download optimized file",
+        label="⬇ Download optimized file",
         data=src_after,
         file_name=output_path.name,
         mime="text/plain",
         disabled=not bool(src_after.strip()),
+        use_container_width=True,
+    )
+
+    st.markdown(
+        "<div class='footer-note'>Built with ❤️ for Compiler Optimization Project</div>",
+        unsafe_allow_html=True,
     )
 
 
