@@ -112,6 +112,12 @@ Basic run:
 .\loop_optimizer.exe input.c
 ```
 
+Choose output file and emit machine-readable JSON report:
+
+```powershell
+.\loop_optimizer.exe input.c --output optimized.c --report-json optimizer_report.json
+```
+
 Skip runtime comparison:
 
 ```powershell
@@ -135,7 +141,7 @@ pip install -r requirements.txt
 Run visualizer:
 
 ```powershell
-python run_optimizer_visualizer.py --input input.c --output ouput.c --port 8513
+python run_optimizer_visualizer.py --port 8513
 ```
 
 Then open:
@@ -144,10 +150,31 @@ Then open:
 http://localhost:8513
 ```
 
+Workflow:
+
+- Open dashboard in browser.
+- Upload/select the source file in the UI.
+- Click **Optimize in backend**.
+- View diff, counters, and download optimized output.
+
+Optional preloaded compare mode:
+
+```powershell
+python run_optimizer_visualizer.py --input input.c --output optimized.c --metrics optimizer_report.json --port 8513
+```
+
 ## CLI Arguments
 
 ```text
-loop_optimizer <input-file> [--compiler <gcc|g++>] [--no-compare] [--keep-binaries]
+loop_optimizer <input-file> [--compiler <gcc|g++>] [--output <file>] [--report-json <file>] [--no-compare] [--keep-binaries] [--fail-on-error]
+```
+
+## Deployment-Friendly Validation
+
+Example command for CI/CD style checks:
+
+```powershell
+.\loop_optimizer.exe input.c --output optimized.c --report-json optimizer_report.json --no-compare --fail-on-error
 ```
 
 ## Optimization Report

@@ -1,0 +1,16 @@
+{
+  "input": "D:\\New folder (2)\\CD\\dashboard_runs\\sol12_20260427_161909.cpp",
+  "output": "D:\\New folder (2)\\CD\\dashboard_runs\\sol12_20260427_161909_optimized.cpp",
+  "compiler": "g++",
+  "loopsDetected": 4,
+  "loopsUnrolled": 2,
+  "loopsSkippedSafety": 2,
+  "hoistedStatements": 0,
+  "commonSubexpressionsEliminated": 0,
+  "algebraicSimplifications": 0,
+  "strengthReductions": 0,
+  "deadCodeRemoved": 0,
+  "transformsFailed": 0,
+  "warningsCount": 2,
+  "elapsedMs": 5
+}

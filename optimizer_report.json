@@ -1,0 +1,16 @@
+{
+  "input": "input.c",
+  "output": "optimized.c",
+  "compiler": "gcc",
+  "loopsDetected": 10,
+  "loopsUnrolled": 10,
+  "loopsSkippedSafety": 0,
+  "hoistedStatements": 5,
+  "commonSubexpressionsEliminated": 1,
+  "algebraicSimplifications": 1,
+  "strengthReductions": 1,
+  "deadCodeRemoved": 0,
+  "transformsFailed": 0,
+  "warningsCount": 0,
+  "elapsedMs": 36
+}

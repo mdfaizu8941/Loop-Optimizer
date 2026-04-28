@@ -18,6 +18,19 @@ bool parseArgs(int argc, char **argv, Args &args) {
             args.noCompare = true;
         } else if (token == "--keep-binaries") {
             args.keepBinaries = true;
+        } else if (token == "--fail-on-error") {
+            args.failOnError = true;
+        } else if (token == "--output") {
+            if (i + 1 >= argc) {
+                return false;
+            }
+            args.output = argv[++i];
+        } else if (token == "--report-json") {
+            if (i + 1 >= argc) {
+                return false;
+            }
+            args.hasReportJson = true;
+            args.reportJson = argv[++i];
         } else if (token == "--compiler") {
             if (i + 1 >= argc) {
                 return false;
@@ -33,5 +46,7 @@ bool parseArgs(int argc, char **argv, Args &args) {
 }
 
 void printUsage(const char *prog) {
-    cerr << "Usage: " << prog << " <input-file> [--compiler <gcc|g++>] [--no-compare] [--keep-binaries]\\n";
+    cerr << "Usage: " << prog
+         << " <input-file> [--compiler <gcc|g++>] [--output <file>] [--report-json <file>]"
+         << " [--no-compare] [--keep-binaries] [--fail-on-error]\\n";
 }

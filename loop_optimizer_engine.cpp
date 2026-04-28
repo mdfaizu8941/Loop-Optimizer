@@ -48,6 +48,8 @@ const regex RE_DECL_ASSIGN(R"(^\s*([A-Za-z_][\w\s*]+?)\s+([A-Za-z_]\w*)\s*=\s*(.
 const regex RE_PLAIN_ASSIGN(R"(^\s*([A-Za-z_]\w*)\s*=\s*(.+);\s*$)");
 const regex RE_MODIFY_OP(R"(\b([A-Za-z_]\w*)\s*(\+\+|--|\+=|-=|\*=|/=|%=))");
 const regex RE_CONTROL_FLOW(R"(\b(break|continue|goto|return)\b)");
+const regex RE_VOLATILE_OR_ASM(R"(\b(volatile|asm|__asm__|__volatile__)\b)");
+const regex RE_FUNCTION_LIKE(R"(\b([A-Za-z_]\w*)\s*\()");
 
 const unordered_set<string> C_KEYWORDS = {
     "auto", "break", "case", "char", "const", "continue", "default", "do",
@@ -60,6 +62,10 @@ const unordered_set<string> C_KEYWORDS = {
     "mutable", "namespace", "new", "noexcept", "nullptr", "operator", "private",
     "protected", "public", "reinterpret_cast", "static_assert", "template", "this",
     "throw", "true", "try", "typename", "using", "virtual"
+};
+
+const unordered_set<string> SAFE_NON_CALL_TOKENS = {
+    "if", "for", "while", "switch", "sizeof", "alignof", "catch"
 };
 
 string trim(const string &s) {
@@ -344,6 +350,30 @@ pair<string, int> applyStrengthReduction(const string &stmt) {
 }
 
 bool parseAssignment(const string &stmt, AssignmentInfo &outInfo);
+
+bool hasPotentialFunctionCall(const string &text) {
+    for (sregex_iterator it(text.begin(), text.end(), RE_FUNCTION_LIKE), end; it != end; ++it) {
+        const string token = (*it).str(1);
+        if (SAFE_NON_CALL_TOKENS.find(token) == SAFE_NON_CALL_TOKENS.end()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool shouldSkipLoopForSafety(const string &header, const string &body) {
+    const string combined = header + "\n" + body;
+    if (regex_search(combined, RE_VOLATILE_OR_ASM)) {
+        return true;
+    }
+    if (regex_search(body, RE_CONTROL_FLOW)) {
+        return true;
+    }
+    if (hasPotentialFunctionCall(body)) {
+        return true;
+    }
+    return false;
+}
 
 string stripWrappingParens(string expr) {
     expr = trim(expr);
@@ -806,6 +836,12 @@ bool parseSimpleFor(const string &header, ForInfo &outInfo) {
 }
 
 string optimizeLoop(const LoopSpan &loop, const string &body, OptimizationReport &report) {
+    if (shouldSkipLoopForSafety(loop.header, body)) {
+        ++report.loopsSkippedSafety;
+        ++report.warningsCount;
+        return loop.kind + " (" + loop.header + ") " + body;
+    }
+
     const string nestedOptimizedBody = optimizeNestedLoopsInBody(body, report);
 
     bool hasLoopVar = false;
@@ -905,8 +941,14 @@ pair<string, OptimizationReport> optimizeSource(string code) {
     for (auto it = loops.rbegin(); it != loops.rend(); ++it) {
         const LoopSpan &loop = *it;
         const string body = code.substr(loop.bodyStart, loop.bodyEnd - loop.bodyStart + 1);
-        const string optimized = optimizeLoop(loop, body, report);
-        code = code.substr(0, loop.start) + optimized + code.substr(loop.bodyEnd + 1);
+        try {
+            const string optimized = optimizeLoop(loop, body, report);
+            code = code.substr(0, loop.start) + optimized + code.substr(loop.bodyEnd + 1);
+        } catch (...) {
+            ++report.transformsFailed;
+            ++report.warningsCount;
+            ++report.loopsSkippedSafety;
+        }
     }
 
     return {code, report};

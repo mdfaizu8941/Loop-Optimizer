@@ -2,6 +2,11 @@
 setlocal
 
 cd /d "%~dp0"
-python run_optimizer_visualizer.py --input input.c --output ouput.c
+
+if exist ".venv\Scripts\python.exe" (
+	".venv\Scripts\python.exe" run_optimizer_visualizer.py --port 8515
+) else (
+	python run_optimizer_visualizer.py --port 8515
+)
 
 endlocal

@@ -1,1 +1,1 @@
-& "d:/New folder (2)/CD/.venv/Scripts/python.exe" run_optimizer_visualizer.py --input input.c --output ouput.c --port 8512
+ set-Location "d:/New folder (2)/CD"; & "d:/New folder (2)/.venv/Scripts/python.exe" run_optimizer_visualizer.py --port 8512
