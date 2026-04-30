@@ -163,6 +163,23 @@ Optional preloaded compare mode:
 python run_optimizer_visualizer.py --input input.c --output optimized.c --metrics optimizer_report.json --port 8513
 ```
 
+## Deploy To Render
+
+This repo is set up for Render using Docker so the Streamlit dashboard and C++ optimizer can run without changing the backend logic.
+
+Steps:
+
+1. Push this repository to GitHub.
+2. Create a new Render Web Service from the repo.
+3. Let Render use the included `render.yaml` and `Dockerfile`.
+4. Deploy the service; Render will build `loop_optimizer.exe` inside the container and start Streamlit on port `8501`.
+
+Notes:
+
+- The dashboard entrypoint remains `optimizer_dashboard.py`.
+- The optimizer binary is compiled at image build time, so the optimization logic is unchanged.
+- This is a better fit than Vercel for the current architecture.
+
 ## CLI Arguments
 
 ```text

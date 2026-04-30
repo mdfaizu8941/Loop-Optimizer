@@ -1,0 +1,14 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.exe
+*.o
+*.obj
+dashboard_runs
+runlog.txt
+last_optimizer_run.json
+optimizer_report.json
+optimized.c
+ouput.c
+*.log
